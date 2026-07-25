@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Formalyze — Formal Email Rewriter",
+  "version": "0.1.0",
+  "description": "Adds a Formalize button to Gmail that rewrites your draft into formal, professional English using OpenAI.",
+  "permissions": ["storage"],
+  "host_permissions": ["https://mail.google.com/*", "https://api.openai.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://mail.google.com/*"],
+      "js": ["content.js"],
+      "css": ["content.css"]
+    }
+  ],
+  "action": {
+    "default_popup": "options.html",
+    "default_title": "Formalyze Settings"
+  }
+}
