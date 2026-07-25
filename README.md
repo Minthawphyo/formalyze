@@ -28,6 +28,4 @@ The API key lives in the browser's local storage and requests go straight from y
 
 Text is replaced using a deprecated browser API (`execCommand`), which is still the most reliable way to update Gmail's editable content without breaking its internal undo stack. The diff view is computed with a simple word level comparison, which works well at email length but wasn't built for huge documents.
 
-## Ideas for later
 
-A tone slider with more than two options, support for Outlook and other webmail clients, and a keyboard shortcut so you don't have to reach for the mouse every time.
