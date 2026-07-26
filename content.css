@@ -30,6 +30,31 @@
   display: block;
 }
 
+.formalyze-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 28px;
+  border-radius: 6px;
+  color: #9aa0a6;
+  cursor: grab;
+  flex: none;
+}
+
+.formalyze-handle:hover {
+  color: #5f6368;
+  background: #f1f3f4;
+}
+
+.formalyze-wrapper.formalyze-dragging {
+  opacity: 0.85;
+}
+
+.formalyze-wrapper.formalyze-dragging .formalyze-handle {
+  cursor: grabbing;
+}
+
 /* Secondary actions match Gmail's own neutral toolbar-icon-button styling. */
 .formalyze-btn-undo,
 .formalyze-btn-diff {

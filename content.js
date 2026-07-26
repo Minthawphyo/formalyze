@@ -18,6 +18,8 @@
     '<svg class="formalyze-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62C8.77 11.22 10.55 10.5 12.5 10.5c3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg>';
   const ICON_COMPARE =
     '<svg class="formalyze-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9.01 14H2v2h7.01v3L13 15l-3.99-4v3zm5.98-2v3H22v-2h-7.01V12l-4 3.5 4 3.5v-3H22"/></svg>';
+  const ICON_GRIP =
+    '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><circle cx="9" cy="6" r="1.4"/><circle cx="15" cy="6" r="1.4"/><circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/><circle cx="9" cy="18" r="1.4"/><circle cx="15" cy="18" r="1.4"/></svg>';
 
   function makePill(iconSvg, label, extraClass) {
     const btn = document.createElement('div');
@@ -35,6 +37,11 @@
     const wrapper = document.createElement('div');
     wrapper.className = 'formalyze-wrapper';
 
+    const handle = document.createElement('div');
+    handle.className = 'formalyze-handle';
+    handle.title = 'Drag to move';
+    handle.innerHTML = ICON_GRIP;
+
     const formalizeBtn = makePill(ICON_SPARKLE, 'Formalize', 'formalyze-btn-main');
     const undoBtn = makePill(ICON_UNDO, 'Undo', 'formalyze-btn-undo');
     const diffBtn = makePill(ICON_COMPARE, 'Changes', 'formalyze-btn-diff');
@@ -45,7 +52,7 @@
     diffPanel.className = 'formalyze-diff-panel';
     diffPanel.style.display = 'none';
 
-    wrapper.append(formalizeBtn, undoBtn, diffBtn);
+    wrapper.append(handle, formalizeBtn, undoBtn, diffBtn);
     document.body.append(wrapper, diffPanel);
 
     const state = {
@@ -56,14 +63,39 @@
       diffPanel,
       originalText: null,
       rewrittenText: null,
-      busy: false
+      busy: false,
+      offsetX: 0,
+      offsetY: 0
     };
 
     formalizeBtn.addEventListener('click', () => onFormalizeClick(bodyEl, state));
     undoBtn.addEventListener('click', () => onUndoClick(bodyEl, state));
     diffBtn.addEventListener('click', () => onDiffToggle(state));
+    handle.addEventListener('mousedown', (e) => onDragStart(e, bodyEl, state));
 
     return state;
+  }
+
+  function onDragStart(e, bodyEl, state) {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const startOffsetX = state.offsetX;
+    const startOffsetY = state.offsetY;
+    state.wrapper.classList.add('formalyze-dragging');
+
+    function onMove(moveEvent) {
+      state.offsetX = startOffsetX + (moveEvent.clientX - startX);
+      state.offsetY = startOffsetY + (moveEvent.clientY - startY);
+      positionControls(bodyEl, state);
+    }
+    function onUp() {
+      state.wrapper.classList.remove('formalyze-dragging');
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+    }
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
   }
 
   function setFormalizeState(state, mode) {
@@ -253,7 +285,7 @@
   function positionDiffPanel(state) {
     const wrapperRect = state.wrapper.getBoundingClientRect();
     state.diffPanel.style.top = `${wrapperRect.bottom + 6}px`;
-    state.diffPanel.style.right = state.wrapper.style.right;
+    state.diffPanel.style.left = `${wrapperRect.left}px`;
   }
 
   function positionControls(bodyEl, state) {
@@ -270,8 +302,11 @@
       state.diffPanel.style.display = 'none';
       return;
     }
-    state.wrapper.style.top = `${Math.max(rect.top + 8, 8)}px`;
-    state.wrapper.style.right = `${Math.max(window.innerWidth - rect.right + 8, 8)}px`;
+    const wrapperWidth = state.wrapper.offsetWidth || 220;
+    const baseLeft = rect.right - wrapperWidth;
+    const baseTop = rect.top + 8;
+    state.wrapper.style.left = `${Math.max(baseLeft + state.offsetX, 8)}px`;
+    state.wrapper.style.top = `${Math.max(baseTop + state.offsetY, 8)}px`;
     if (state.diffPanel.style.display === 'block') positionDiffPanel(state);
   }
 
