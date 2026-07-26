@@ -2,12 +2,12 @@
   const PROCESSED_ATTR = 'data-formalyze-injected';
   const states = new Map(); // bodyEl -> control state
 
-  // Gmail labels its compose body exactly "Message Body". Outlook on the web
-  // labels its body "Message body, press Alt+F10..." (accessibility hint
-  // included), so match on a case-insensitive prefix instead of an exact
-  // string to cover both without hardcoding either provider by name.
+  // Gmail labels its compose body "Message Body" on a div. Outlook on the
+  // web labels its body "Message body" too, but not necessarily on a div,
+  // so match any element type on a case-insensitive prefix instead of
+  // hardcoding either provider's exact tag or label casing.
   function findComposeBodies() {
-    return Array.from(document.querySelectorAll('div[contenteditable="true"][aria-label]'))
+    return Array.from(document.querySelectorAll('[contenteditable="true"][aria-label]'))
       .filter((el) => el.getAttribute('aria-label').trim().toLowerCase().startsWith('message body'))
       .filter((el) => !el.hasAttribute(PROCESSED_ATTR));
   }
