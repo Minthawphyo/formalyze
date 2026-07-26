@@ -2,10 +2,14 @@
   const PROCESSED_ATTR = 'data-formalyze-injected';
   const states = new Map(); // bodyEl -> control state
 
+  // Gmail labels its compose body exactly "Message Body". Outlook on the web
+  // labels its body "Message body, press Alt+F10..." (accessibility hint
+  // included), so match on a case-insensitive prefix instead of an exact
+  // string to cover both without hardcoding either provider by name.
   function findComposeBodies() {
-    return Array.from(
-      document.querySelectorAll('div[aria-label="Message Body"], div[aria-label="Message body"]')
-    ).filter((el) => !el.hasAttribute(PROCESSED_ATTR));
+    return Array.from(document.querySelectorAll('div[contenteditable="true"][aria-label]'))
+      .filter((el) => el.getAttribute('aria-label').trim().toLowerCase().startsWith('message body'))
+      .filter((el) => !el.hasAttribute(PROCESSED_ATTR));
   }
 
   const ICON_SPARKLE =
