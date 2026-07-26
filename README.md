@@ -1,4 +1,9 @@
-# Formalyze
+![Formalyze](banner.png)
+
+![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-4285F4?logo=googlechrome&logoColor=white)
+![Manifest V3](https://img.shields.io/badge/Manifest-V3-1a73e8)
+![OpenAI](https://img.shields.io/badge/Powered%20by-OpenAI-412991?logo=openai&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-4caf50)
 
 Formalyze is a Chrome extension that adds a Formalize button to Gmail's compose window. It takes whatever you just typed and rewrites it into formal, professional English using the OpenAI API. I built it because writing something formal is genuinely harder than writing what you actually mean, especially if you grew up texting instead of writing letters.
 
